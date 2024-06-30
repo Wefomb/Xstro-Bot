@@ -1,96 +1,95 @@
-const antiCallMessage =
- process.env.ANTICALL_MESSAGE ||
- '```Hi, this is Suhail-Md, a Personal Assistant!!\n\n\tSorry, we cannot receive calls at the moment, whether in a group or personally.\n\nIf you need help or want to request features, please contact the owner.\n\n\nPowered by Suhail-Md Chatbot```'
+const { smd, prefix, bot_ } = require('../lib')
 
-const { smd, bot_, prefix } = require('../lib')
+const DEFAULT_ANTICALL_MESSAGE =
+ '```Hi, this is Suhail-Md, a Personal Assistant!\n\nSorry, we cannot receive calls at the moment, whether in a group or personal.\n\nIf you need help or want to request features, please chat with the owner.\n\nPowered by Suhail-Md Chatbot```'
 
+const antiCallMessage = process.env.ANTICALL_MESSAGE || DEFAULT_ANTICALL_MESSAGE
 let antiCallCountries = []
-let antiCallUsers = {}
-let bots = false
+let antiCallusers = {}
 
-// Command handler for setting anti-call feature
 smd(
  {
   pattern: 'anticall',
   desc: 'Detects calls and declines them.',
-  category: 'Owner',
-  use: '<on | off>',
+  category: 'owner',
+  use: '<on | off | country_codes>',
   filename: __filename,
  },
- async (client, message) => {
-  let botData = (await bot_.findOne({ id: '465' + message.user })) || (await bot_.findOne({ id: '465' + message.user }))
-  let command = message.data ? message.data.toLowerCase().trim() : ''
+ async (message, args) => {
+  const botSettings =
+   (await bot_.findOne({ id: `bot_${message.user}` })) ||
+   (await bot_.updateOne({ id: `bot_${message.user}` }, { $setOnInsert: { anticall: 'false' } }, { upsert: true }))
 
-  if (command.startsWith('enable') || command.startsWith('disable')) {
-   if (botData.anticall === 'false' && command.startsWith('disable')) {
-    return await client.send('*anticall Already Disabled In Current Chat!*')
+  const command = args ? args.toLowerCase().trim() : ''
+
+  if (['off', 'deact', 'disable'].some(cmd => command.startsWith(cmd))) {
+   if (botSettings.anticall === 'false') {
+    return await message.reply('*AntiCall is already disabled in the current chat!*')
    }
-   await bot_.updateOne({ id: '465' + message.user }, { anticall: 'false' })
-   return await client.send('*anticall Disable Successfully!*')
-  } else if (!message.data) {
-   return await client.send(
-    `*anticall ${botData.anticall === 'false' ? 'Not set to any' : `Succesfully set to "${botData.anticall}"`}!*`
+   await bot_.updateOne({ id: `bot_${message.user}` }, { anticall: 'false' })
+   return await message.reply('*AntiCall has been disabled successfully!*')
+  }
+
+  if (!args) {
+   const status = botSettings.anticall === 'false' ? 'Not set' : `set to "${botSettings.anticall}"`
+   return await message.reply(
+    `*_AntiCall is currently ${status}._*\nProvide country codes to update status.\nE.g.: _.anticall all | 212, 91_`
    )
   }
 
-  let countries = command.includes(',')
-   ? command
+  const countryCodes = command.includes('all')
+   ? 'all'
+   : args
       .split(',')
-      .map(num => parseInt(num))
-      .toString()
-   : false
-  if (!message.data || !countries) {
-   return await client.send(`*Please provide a valid country code.*\n*Example: ${prefix}anticall all,212,91_*`)
-  } else if (countries) {
-   await bot_.updateOne({ id: '465' + message.user }, { anticall: '' + countries })
-   return await client.send(`*anticall Set to "${countries}" Successfully!*`)
-  } else {
-   return await client.send(`*Please provide country code to block calls.*\n*Example: ${prefix}anticall all,212,91_*`)
+      .map(code => parseInt(code.trim()))
+      .filter(code => !isNaN(code) && code > 0)
+      .join(',')
+
+  if (!countryCodes) {
+   return await message.reply(`*Please provide valid country code(s)*\nExample: ${prefix}anticall all | 92, 1`)
   }
+
+  await bot_.updateOne({ id: `bot_${message.user}` }, { anticall: countryCodes })
+  return await message.reply(`*AntiCall has been successfully set to "${countryCodes}"!*`)
  }
 )
 
-// Call handler for detecting and declining calls
 smd(
  {
-  call: true,
+  call: 'offer',
  },
- async message => {
+ async call => {
   try {
-   if (!bots) {
-    bots = await bot_.findOne({ id: '465' + message.user })
-   }
-   if (message.isBot || !bots || !bots.anticall || bots.anticall === 'false') {
-    return
-   }
+   if (call.fromMe) return
 
-   if (!antiCallCountries || !antiCallCountries[0]) {
-    antiCallCountries = bots.anticall?.split(',') || []
-    antiCallCountries = antiCallCountries.filter(code => code.toLowerCase() !== '')
-   }
+   const botSettings = await bot_.findOne({ id: `bot_${call.user}` })
+   if (!botSettings || botSettings.anticall === 'false') return
 
-   let countryCode = ('' + bots.anticall).includes('all') ? 'all' : ''
-   let isBlocked =
-    countryCode === 'all' ? true : antiCallCountries.some(code => message.from?.toLowerCase()?.startsWith(code))
+   antiCallCountries = botSettings.anticall.split(',').filter(code => code.trim() !== '')
+   const isBlocked =
+    botSettings.anticall === 'all' || antiCallCountries.some(code => call.from?.toString()?.startsWith(code))
 
-   if (isBlocked || message.isGroup) {
-    try {
-     if (!antiCallUsers || !antiCallUsers[message.from]) {
-      antiCallUsers[message.from] = { warn: 0 }
-     }
+   if (isBlocked || call.isBot) {
+    antiCallusers[call.from] = antiCallusers[call.from] || { warn: 0 }
 
-     if (antiCallUsers[message.from].warn < 2) {
-      await message.send(antiCallMessage)
-     }
-
-     antiCallUsers[message.from].warn++
-     await message.decline()
-    } catch (error) {
-     console.warn(error)
+    if (antiCallusers[call.from].warn < 2) {
+     await call.reply(antiCallMessage)
     }
+
+    antiCallusers[call.from].warn++
+
+    await call.reply(
+     `*_Call rejected from user @${call.from.split('@')[0]} (Warning ${antiCallusers[call.from].warn}/3)_*`,
+     { mentions: [call.from] },
+     'warn',
+     '',
+     call.user
+    )
+
+    return await call.decline()
    }
   } catch (error) {
-   console.error(error)
+   console.error('Error in AntiCall handler:', error)
   }
  }
 )
