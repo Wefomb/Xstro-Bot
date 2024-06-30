@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/github/forks/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub forks">
   <img src="https://img.shields.io/github/watchers/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub watchers">
   <img src="https://img.shields.io/github/issues/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub issues">
-  <img src="https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub release">
+  [<img src="https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub release">](https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge)
   <img src="https://img.shields.io/github/contributors/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub contributors">
 </p>
 
