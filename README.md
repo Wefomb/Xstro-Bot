@@ -13,25 +13,25 @@
   <img src="https://img.shields.io/github/forks/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub forks">
   <img src="https://img.shields.io/github/watchers/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub watchers">
   <img src="https://img.shields.io/github/issues/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub issues">
-  [<img src="https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub release">](https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge)
+  <img src="https://img.shields.io/github/v/release/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub release">
   <img src="https://img.shields.io/github/contributors/AstroFx0011/Xstro-Bot?style=for-the-badge" alt="GitHub contributors">
 </p>
 
 ## Commands
 
-| Command   | Description                                            |
-|-----------|--------------------------------------------------------|
-| `/start`  | Initialize the bot and receive a welcome message.       |
-| `/help`   | Get a list of available commands and their descriptions.|
-| `/afk` | Schedule messages to be sent at a when a user dm bot.          |
-| `/status` | Check the status of the bot and its current operations.|
-| `/custom` | Execute custom-defined commands for specific needs.     |
-| `/menu`   | Display the bot's menu with available options.          |
-| `/ping`   | Check the bot's response time.                          |
-| `/runtime`| View the current runtime status of the bot.             |
-| `/test`   | Test the bot's functionalities.                         |
-| `/listpc` | List all participants in the current chat.              |
-| `/listgc` | List all groups where the bot is currently active.      |
+| Command    | Description                                              |
+| ---------- | -------------------------------------------------------- |
+| `/start`   | Initialize the bot and receive a welcome message.        |
+| `/help`    | Get a list of available commands and their descriptions. |
+| `/afk`     | Schedule messages to be sent at a when a user dm bot.    |
+| `/status`  | Check the status of the bot and its current operations.  |
+| `/custom`  | Execute custom-defined commands for specific needs.      |
+| `/menu`    | Display the bot's menu with available options.           |
+| `/ping`    | Check the bot's response time.                           |
+| `/runtime` | View the current runtime status of the bot.              |
+| `/test`    | Test the bot's functionalities.                          |
+| `/listpc`  | List all participants in the current chat.               |
+| `/listgc`  | List all groups where the bot is currently active.       |
 
 ## Features
 
@@ -57,7 +57,6 @@ Deploying Xstro-Bot is straightforward and can be done on various platforms.
   <a href='#' target="_blank"><img alt='Contribute' src='https://img.shields.io/badge/Contribute-100000?style=for-the-badge&logo=github&logoColor=white&labelColor=blue&color=blue'/></a>
   <a href='#' target="_blank"><img alt='Share' src='https://img.shields.io/badge/Fork Repo-100000?style=for-the-badge&logo=share&logoColor=white&labelColor=blue&color=blue'/></a>
 </p>
-
 
 ## License
 
