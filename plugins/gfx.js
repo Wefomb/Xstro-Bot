@@ -3,8 +3,6 @@ const {
     prefix,
     Config
   } = require("../lib");
-  const done = "✳️";
-  const rwait = "✳️";
   let GfxFunc = async (_0xe512ac, {
     Void: _0x50b799,
     text: _0x3930d1,
